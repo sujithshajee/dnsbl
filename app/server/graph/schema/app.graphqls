@@ -1,0 +1,111 @@
+"IP represents an IPv4 IP address"
+type IP implements Node {
+  "Unique identifier for IP address"
+  id: ID!
+
+  "The datetime this IP was first checked"
+  created_at: Time!
+
+  "The datetime this IP was last checked"
+  updated_at: Time!
+
+  """
+  response_code represents the last response code from the latest App query
+  """
+  response_code: String!
+
+  "The (IPv4) IP address"
+  ip_address: String!
+
+  "The queries, ordered by most recently finished"
+  queries(
+    after: Cursor
+    before: Cursor
+    first: Int
+    last: Int
+    orderBy: AppQueryOrder
+  ): AppQueryConnection
+
+}
+
+"AppQueryOrder is the ordering input for a AppQuery"
+input AppQueryOrder {
+  direction: OrderDirection!
+  field: AppQueryOrderField
+}
+
+"AppQueryOrderField is the field to order by"
+enum AppQueryOrderField {
+  UPDATED_AT
+  CREATED_AT
+}
+
+"AppQueryConnection is the paginated cursor connection for an IP's AppQueries"
+type AppQueryConnection {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [AppQueryEdge]
+}
+
+"AppQueryEdge is the connection edge for IP AppQueries"
+type AppQueryEdge {
+  node: AppQuery
+  cursor: Cursor!
+}
+
+"AppQuery represents a query run to a dnsbl service"
+type AppQuery implements Node {
+  "Unique ID for the AppQuery"
+  id: ID!
+
+  "The datetime this IP was created"
+  created_at: Time!
+
+  "The datetime this AppQuery was last updated"
+  updated_at: Time!
+
+  "The IP address the query was performed on"
+  ip: IP!
+
+  "The responses that were received for this dnsbl query"
+  responses(
+    after: Cursor
+    before: Cursor
+    first: Int
+    last: Int
+  ): AppResponseConnection
+}
+
+"AppResponseConnection is the connection edge for AppQuery"
+type AppResponseConnection {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [AppResponseEdge]
+}
+
+"AppResponseEdge is the connection edge for AppResponse on a AppQuery"
+type AppResponseEdge {
+  node: AppResponse
+  cursor: Cursor!
+}
+
+"AppResponse represents the response to a query to a dnsbl service for an IP"
+type AppResponse implements Node {
+  "Unique ID for the AppResponse"
+  id: ID!
+
+  "The datetime this AppResponse was created"
+  created_at: Time!
+
+  "The datetime this AppResponse was last updated"
+  updated_at: Time!
+
+  "The query this response represents a result for"
+  query: AppQuery!
+
+  "The response code represented by this response"
+  code: String!
+
+  "Description a human readable representation of the error code"
+  description: String!
+}

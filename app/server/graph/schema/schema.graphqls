@@ -1,0 +1,69 @@
+"Relay Node interface support"
+interface Node {
+  id: ID!
+}
+
+"OrderDirection represents the directional ordering of a pagination cursor"
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+"Cursor represents cursor used for pagination"
+scalar Cursor
+
+"PageInfo represents pagination information for forwards and backwards pagination"
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: Cursor
+  endCursor: Cursor
+}
+
+"Time represents time-based fields"
+scalar Time
+
+"UUID represents UUID-based IDs"
+scalar UUID
+
+"Type of task being preformed"
+enum TaskType {
+  IPDNSBL
+}
+
+"Status of the task"
+enum TaskStatus {
+  WAITING
+  IN_PROGRESS
+  DONE
+  ERROR
+}
+
+"An task can be used to check the progress of a background task"
+type Task implements Node {
+  "Unique ID of the enqueued task"
+  id: ID!
+
+  "Type of the enqueued task. Only IPDNSBL is supported"
+  type: TaskType!
+
+  "IP Address to be checked"
+  ip_address: String!
+
+  "Status of the Task"
+  status: TaskStatus!
+
+  "Error description if the Status is ERROR"
+  error: String
+}
+
+"Query represents queries that the GraphQL service exposes"
+type Query {
+  node(id: ID!): Node
+  getIPDetails(ip: String!): IP
+}
+
+"Mutations represent requests that will modify data"
+type Mutation {
+  enqueue(ip: [String!]): [Task]
+}
