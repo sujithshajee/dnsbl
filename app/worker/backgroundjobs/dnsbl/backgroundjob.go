@@ -12,13 +12,11 @@ import (
 
 const checkTime = 24 * time.Hour
 
-// DNSBLJob represents a worker.Job to query a DNSBL service
 type DNSBLTask struct {
 	cl    *ent.Client
 	dnsbl dnsbl.DNSBL
 }
 
-// NewDNSBLJob returns a new worker job for querying a DNSBL service
 func NewDNSBLJob(cl *ent.Client, dnsbl dnsbl.DNSBL) *DNSBLTask {
 	return &DNSBLTask{
 		cl:    cl,
@@ -26,15 +24,13 @@ func NewDNSBLJob(cl *ent.Client, dnsbl dnsbl.DNSBL) *DNSBLTask {
 	}
 }
 
-// Execute a DNSBL query and store the results on our graph
 func (s *DNSBLTask) Execute(ctx context.Context, ipaddr string) error {
 	tx, err := s.cl.Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("starting transaction: %w", err)
 	}
-	defer func() { _ = tx.Rollback() }() // rollback on failure
+	defer func() { _ = tx.Rollback() }()
 
-	// TODO: this should be separate retryable states or workflows
 	ipe, err := tx.IP.Query().Where(
 		ip.IPAddressEQ(ipaddr),
 	).Only(ctx)
@@ -51,7 +47,6 @@ func (s *DNSBLTask) Execute(ctx context.Context, ipaddr string) error {
 	default:
 		nextAllowed := ipe.UpdatedAt.Add(checkTime)
 		if time.Now().Before(nextAllowed) {
-			// rollback so the job isn't requeued
 			_ = tx.Rollback()
 			return fmt.Errorf("please wait before checking the IP address again")
 		}

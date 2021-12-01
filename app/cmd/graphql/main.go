@@ -9,7 +9,6 @@ import (
 
 type cmd struct{}
 
-// Register registers the graphql server command to the binary
 func Register(p *flags.Parser) {
 	c, err := p.AddCommand("graphql", "run graphql", "", &cmd{})
 	if err != nil {

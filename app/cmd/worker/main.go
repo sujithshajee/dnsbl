@@ -18,7 +18,6 @@ type cmd struct {
 	flags.Database
 }
 
-// Register registers the worker runner with the flags parser given
 func Register(p *gflags.Parser) {
 	_, err := p.AddCommand("worker", "worker service", "", &cmd{})
 	if err != nil {
@@ -26,7 +25,6 @@ func Register(p *gflags.Parser) {
 	}
 }
 
-// Execute initializes and starts a new worker pool
 func (c *cmd) Execute(args []string) error {
 	cl, err := ent.Open(c.DatabaseDriver, c.DatabaseURI)
 	if err != nil {

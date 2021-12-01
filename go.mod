@@ -16,11 +16,8 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/gammazero/deque v0.1.0 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/graphql-go/graphql v0.8.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
-	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
@@ -34,8 +31,8 @@ require (
 require (
 	entgo.io/contrib v0.2.0
 	github.com/gammazero/workerpool v1.1.2
-	github.com/gorilla/mux v1.8.0
 	github.com/jessevdk/go-flags v1.5.0
+	github.com/magefile/mage v1.11.0
 	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/onsi/gomega v1.17.0
 	go.uber.org/zap v1.19.1
