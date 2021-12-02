@@ -1,24 +1,9 @@
-"Relay Node interface support"
 interface Node {
   id: ID!
 }
 
-"OrderDirection represents the directional ordering of a pagination cursor"
-enum OrderDirection {
-  ASC
-  DESC
-}
-
 "Cursor represents cursor used for pagination"
 scalar Cursor
-
-"PageInfo represents pagination information for forwards and backwards pagination"
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: Cursor
-  endCursor: Cursor
-}
 
 "Time represents time-based fields"
 scalar Time
