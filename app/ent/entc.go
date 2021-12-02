@@ -15,6 +15,7 @@ func main() {
 	ex, err := entgql.NewExtension(
 		entgql.WithWhereFilters(true),
 		entgql.WithConfigPath("../server/gqlgen.yml"),
+		entgql.WithSchemaPath("../server/graph/schema/ent.graphqls"),
 	)
 	if err != nil {
 		log.Fatalf("creating entgql extension: %v", err)
