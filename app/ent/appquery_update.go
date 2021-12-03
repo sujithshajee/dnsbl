@@ -31,6 +31,20 @@ func (aqu *AppQueryUpdate) Where(ps ...predicate.AppQuery) *AppQueryUpdate {
 	return aqu
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (aqu *AppQueryUpdate) SetCreatedAt(t time.Time) *AppQueryUpdate {
+	aqu.mutation.SetCreatedAt(t)
+	return aqu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (aqu *AppQueryUpdate) SetNillableCreatedAt(t *time.Time) *AppQueryUpdate {
+	if t != nil {
+		aqu.SetCreatedAt(*t)
+	}
+	return aqu
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (aqu *AppQueryUpdate) SetUpdatedAt(t time.Time) *AppQueryUpdate {
 	aqu.mutation.SetUpdatedAt(t)
@@ -190,6 +204,13 @@ func (aqu *AppQueryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := aqu.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: appquery.FieldCreatedAt,
+		})
+	}
 	if value, ok := aqu.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -303,6 +324,20 @@ type AppQueryUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *AppQueryMutation
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (aquo *AppQueryUpdateOne) SetCreatedAt(t time.Time) *AppQueryUpdateOne {
+	aquo.mutation.SetCreatedAt(t)
+	return aquo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (aquo *AppQueryUpdateOne) SetNillableCreatedAt(t *time.Time) *AppQueryUpdateOne {
+	if t != nil {
+		aquo.SetCreatedAt(*t)
+	}
+	return aquo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -487,6 +522,13 @@ func (aquo *AppQueryUpdateOne) sqlSave(ctx context.Context) (_node *AppQuery, er
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := aquo.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: appquery.FieldCreatedAt,
+		})
 	}
 	if value, ok := aquo.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

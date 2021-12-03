@@ -1,0 +1,57 @@
+type IP implements Node {
+  id: ID!
+  created_at: Time!
+  updated_at: Time!
+  response_code: String!
+  ip_address: String!
+  queries(after: Cursor, first: Int, before: Cursor, last: Int, orderBy: AppQueryOrder): AppQueryConnection
+}
+
+input AppQueryOrder {
+  direction: OrderDirection!
+  field: AppQueryOrderField
+}
+
+enum AppQueryOrderField {
+  UPDATED_AT
+  CREATED_AT
+}
+
+type AppQueryConnection {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [AppQueryEdge]
+}
+
+type AppQueryEdge {
+  node: AppQuery
+  cursor: Cursor!
+}
+
+type AppQuery implements Node {
+  id: ID!
+  created_at: Time!
+  updated_at: Time!
+  ip: IP!
+  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
+}
+
+type AppResponseConnection {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [AppResponseEdge]
+}
+
+type AppResponseEdge {
+  node: AppResponse
+  cursor: Cursor!
+}
+
+type AppResponse implements Node {
+  id: ID!
+  created_at: Time!
+  updated_at: Time!
+  query: AppQuery!
+  code: String!
+  description: String!
+}

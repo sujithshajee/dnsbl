@@ -30,6 +30,20 @@ func (aru *AppResponseUpdate) Where(ps ...predicate.AppResponse) *AppResponseUpd
 	return aru
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (aru *AppResponseUpdate) SetCreatedAt(t time.Time) *AppResponseUpdate {
+	aru.mutation.SetCreatedAt(t)
+	return aru
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (aru *AppResponseUpdate) SetNillableCreatedAt(t *time.Time) *AppResponseUpdate {
+	if t != nil {
+		aru.SetCreatedAt(*t)
+	}
+	return aru
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (aru *AppResponseUpdate) SetUpdatedAt(t time.Time) *AppResponseUpdate {
 	aru.mutation.SetUpdatedAt(t)
@@ -165,6 +179,13 @@ func (aru *AppResponseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := aru.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: appresponse.FieldCreatedAt,
+		})
+	}
 	if value, ok := aru.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -238,6 +259,20 @@ type AppResponseUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *AppResponseMutation
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (aruo *AppResponseUpdateOne) SetCreatedAt(t time.Time) *AppResponseUpdateOne {
+	aruo.mutation.SetCreatedAt(t)
+	return aruo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (aruo *AppResponseUpdateOne) SetNillableCreatedAt(t *time.Time) *AppResponseUpdateOne {
+	if t != nil {
+		aruo.SetCreatedAt(*t)
+	}
+	return aruo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -398,6 +433,13 @@ func (aruo *AppResponseUpdateOne) sqlSave(ctx context.Context) (_node *AppRespon
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := aruo.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: appresponse.FieldCreatedAt,
+		})
 	}
 	if value, ok := aruo.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

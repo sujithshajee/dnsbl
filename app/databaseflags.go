@@ -1,4 +1,4 @@
-package graphql
+package app
 
 type Database struct {
 	DatabaseURI    string `short:"u" long:"database-uri" env:"DATABASE_URI" description:"database URI to connect to" default:"file:ent?mode=memory&cache=shared&_fk=1"`
