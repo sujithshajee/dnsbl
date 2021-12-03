@@ -16,8 +16,8 @@ func (r *appQueryResolver) IP(ctx context.Context, obj *ent.AppQuery) (*ent.IP, 
 	return obj.Edges.IpaddressOrErr()
 }
 
-func (r *appQueryResolver) Responses(ctx context.Context, obj *ent.AppQuery) (*ent.AppResponseConnection, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *appQueryResolver) Responses(ctx context.Context, obj *ent.AppQuery, after *ent.Cursor, before *ent.Cursor, first *int, last *int) (*ent.AppResponseConnection, error) {
+	return obj.QueryResponses().Paginate(ctx, after, first, before, last)
 }
 
 func (r *appResponseResolver) Code(ctx context.Context, obj *ent.AppResponse) (string, error) {
@@ -62,8 +62,11 @@ func (r *iPResolver) ResponseCode(ctx context.Context, obj *ent.IP) (string, err
 	return rsp.Responsecode, nil
 }
 
-func (r *iPResolver) Queries(ctx context.Context, obj *ent.IP) (*ent.AppQueryConnection, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *iPResolver) Queries(ctx context.Context, obj *ent.IP, after *ent.Cursor, before *ent.Cursor, first *int, last *int, orderBy *ent.AppQueryOrder) (*ent.AppQueryConnection, error) {
+	return obj.QueryQueries().
+		Paginate(ctx, after, first, before, last,
+			ent.WithAppQueryOrder(orderBy),
+		)
 }
 
 // AppQuery returns generated.AppQueryResolver implementation.
