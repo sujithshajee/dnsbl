@@ -8,7 +8,6 @@ import (
 	"strconv"
 )
 
-// Status of the task
 type TaskStatus string
 
 const (
@@ -54,7 +53,6 @@ func (e TaskStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-// Type of task being preformed
 type TaskType string
 
 const (
