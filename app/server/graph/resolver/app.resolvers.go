@@ -17,7 +17,7 @@ func (r *appQueryResolver) IP(ctx context.Context, obj *ent.AppQuery) (*ent.IP, 
 }
 
 func (r *appQueryResolver) Responses(ctx context.Context, obj *ent.AppQuery) (*ent.AppResponseConnection, error) {
-	return obj.Responses()
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *appResponseResolver) Code(ctx context.Context, obj *ent.AppResponse) (string, error) {
@@ -63,7 +63,7 @@ func (r *iPResolver) ResponseCode(ctx context.Context, obj *ent.IP) (string, err
 }
 
 func (r *iPResolver) Queries(ctx context.Context, obj *ent.IP) (*ent.AppQueryConnection, error) {
-	return obj.QueryQueries()
+	panic(fmt.Errorf("not implemented"))
 }
 
 // AppQuery returns generated.AppQueryResolver implementation.

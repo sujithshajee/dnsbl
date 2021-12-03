@@ -430,6 +430,63 @@ func (aq *AppQueryQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// AppQueryOrderFieldCreatedAt orders AppQuery by created_at.
+	AppQueryOrderFieldCreatedAt = &AppQueryOrderField{
+		field: appquery.FieldCreatedAt,
+		toCursor: func(aq *AppQuery) Cursor {
+			return Cursor{
+				ID:    aq.ID,
+				Value: aq.CreatedAt,
+			}
+		},
+	}
+	// AppQueryOrderFieldUpdatedAt orders AppQuery by updated_at.
+	AppQueryOrderFieldUpdatedAt = &AppQueryOrderField{
+		field: appquery.FieldUpdatedAt,
+		toCursor: func(aq *AppQuery) Cursor {
+			return Cursor{
+				ID:    aq.ID,
+				Value: aq.UpdatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f AppQueryOrderField) String() string {
+	var str string
+	switch f.field {
+	case appquery.FieldCreatedAt:
+		str = "CREATED_AT"
+	case appquery.FieldUpdatedAt:
+		str = "UPDATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f AppQueryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *AppQueryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("AppQueryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *AppQueryOrderFieldCreatedAt
+	case "UPDATED_AT":
+		*f = *AppQueryOrderFieldUpdatedAt
+	default:
+		return fmt.Errorf("%s is not a valid AppQueryOrderField", str)
+	}
+	return nil
+}
+
 // AppQueryOrderField defines the ordering field of AppQuery.
 type AppQueryOrderField struct {
 	field    string
@@ -655,6 +712,63 @@ func (ar *AppResponseQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// AppResponseOrderFieldCreatedAt orders AppResponse by created_at.
+	AppResponseOrderFieldCreatedAt = &AppResponseOrderField{
+		field: appresponse.FieldCreatedAt,
+		toCursor: func(ar *AppResponse) Cursor {
+			return Cursor{
+				ID:    ar.ID,
+				Value: ar.CreatedAt,
+			}
+		},
+	}
+	// AppResponseOrderFieldUpdatedAt orders AppResponse by updated_at.
+	AppResponseOrderFieldUpdatedAt = &AppResponseOrderField{
+		field: appresponse.FieldUpdatedAt,
+		toCursor: func(ar *AppResponse) Cursor {
+			return Cursor{
+				ID:    ar.ID,
+				Value: ar.UpdatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f AppResponseOrderField) String() string {
+	var str string
+	switch f.field {
+	case appresponse.FieldCreatedAt:
+		str = "CREATED_AT"
+	case appresponse.FieldUpdatedAt:
+		str = "UPDATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f AppResponseOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *AppResponseOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("AppResponseOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *AppResponseOrderFieldCreatedAt
+	case "UPDATED_AT":
+		*f = *AppResponseOrderFieldUpdatedAt
+	default:
+		return fmt.Errorf("%s is not a valid AppResponseOrderField", str)
+	}
+	return nil
 }
 
 // AppResponseOrderField defines the ordering field of AppResponse.
@@ -884,6 +998,63 @@ func (i *IPQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// IPOrderFieldCreatedAt orders IP by created_at.
+	IPOrderFieldCreatedAt = &IPOrderField{
+		field: ip.FieldCreatedAt,
+		toCursor: func(i *IP) Cursor {
+			return Cursor{
+				ID:    i.ID,
+				Value: i.CreatedAt,
+			}
+		},
+	}
+	// IPOrderFieldUpdatedAt orders IP by updated_at.
+	IPOrderFieldUpdatedAt = &IPOrderField{
+		field: ip.FieldUpdatedAt,
+		toCursor: func(i *IP) Cursor {
+			return Cursor{
+				ID:    i.ID,
+				Value: i.UpdatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f IPOrderField) String() string {
+	var str string
+	switch f.field {
+	case ip.FieldCreatedAt:
+		str = "CREATED_AT"
+	case ip.FieldUpdatedAt:
+		str = "UPDATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f IPOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *IPOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("IPOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *IPOrderFieldCreatedAt
+	case "UPDATED_AT":
+		*f = *IPOrderFieldUpdatedAt
+	default:
+		return fmt.Errorf("%s is not a valid IPOrderField", str)
+	}
+	return nil
+}
+
 // IPOrderField defines the ordering field of IP.
 type IPOrderField struct {
 	field    string
@@ -1111,6 +1282,63 @@ func (t *TaskQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// TaskOrderFieldCreatedAt orders Task by created_at.
+	TaskOrderFieldCreatedAt = &TaskOrderField{
+		field: task.FieldCreatedAt,
+		toCursor: func(t *Task) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.CreatedAt,
+			}
+		},
+	}
+	// TaskOrderFieldUpdatedAt orders Task by updated_at.
+	TaskOrderFieldUpdatedAt = &TaskOrderField{
+		field: task.FieldUpdatedAt,
+		toCursor: func(t *Task) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.UpdatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TaskOrderField) String() string {
+	var str string
+	switch f.field {
+	case task.FieldCreatedAt:
+		str = "CREATED_AT"
+	case task.FieldUpdatedAt:
+		str = "UPDATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TaskOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TaskOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TaskOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *TaskOrderFieldCreatedAt
+	case "UPDATED_AT":
+		*f = *TaskOrderFieldUpdatedAt
+	default:
+		return fmt.Errorf("%s is not a valid TaskOrderField", str)
+	}
+	return nil
+}
+
 // TaskOrderField defines the ordering field of Task.
 type TaskOrderField struct {
 	field    string
@@ -1336,6 +1564,63 @@ func (u *UserQuery) Paginate(
 	}
 
 	return conn, nil
+}
+
+var (
+	// UserOrderFieldCreatedAt orders User by created_at.
+	UserOrderFieldCreatedAt = &UserOrderField{
+		field: user.FieldCreatedAt,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.CreatedAt,
+			}
+		},
+	}
+	// UserOrderFieldUpdatedAt orders User by updated_at.
+	UserOrderFieldUpdatedAt = &UserOrderField{
+		field: user.FieldUpdatedAt,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.UpdatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f UserOrderField) String() string {
+	var str string
+	switch f.field {
+	case user.FieldCreatedAt:
+		str = "CREATED_AT"
+	case user.FieldUpdatedAt:
+		str = "UPDATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f UserOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *UserOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("UserOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *UserOrderFieldCreatedAt
+	case "UPDATED_AT":
+		*f = *UserOrderFieldUpdatedAt
+	default:
+		return fmt.Errorf("%s is not a valid UserOrderField", str)
+	}
+	return nil
 }
 
 // UserOrderField defines the ordering field of User.

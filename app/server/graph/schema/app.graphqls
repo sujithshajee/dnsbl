@@ -18,13 +18,31 @@ type IP implements Node {
   ip_address: String!
 
   "The queries, ordered by most recently finished"
-  queries: AppQueryConnection
+  queries(
+    after: Cursor
+    before: Cursor
+    first: Int
+    last: Int
+    orderBy: AppQueryOrder
+  ): AppQueryConnection
+}
 
+"AppQueryOrder is the ordering input for a AppQuery"
+input AppQueryOrder {
+  direction: OrderDirection!
+  field: AppQueryOrderField
+}
+
+"AppQueryOrderField is the field to order by"
+enum AppQueryOrderField {
+  UPDATED_AT
+  CREATED_AT
 }
 
 "AppQueryConnection is the paginated cursor connection for an IP's AppQueries"
 type AppQueryConnection {
   totalCount: Int!
+  pageInfo: PageInfo!
   edges: [AppQueryEdge]
 }
 
@@ -49,12 +67,18 @@ type AppQuery implements Node {
   ip: IP!
 
   "The responses that were received for this dnsbl query"
-  responses: AppResponseConnection
+  responses(
+    after: Cursor
+    before: Cursor
+    first: Int
+    last: Int
+  ): AppResponseConnection
 }
 
 "AppResponseConnection is the connection edge for AppQuery"
 type AppResponseConnection {
   totalCount: Int!
+  pageInfo: PageInfo!
   edges: [AppResponseEdge]
 }
 

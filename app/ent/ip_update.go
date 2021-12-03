@@ -29,6 +29,20 @@ func (iu *IPUpdate) Where(ps ...predicate.IP) *IPUpdate {
 	return iu
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (iu *IPUpdate) SetCreatedAt(t time.Time) *IPUpdate {
+	iu.mutation.SetCreatedAt(t)
+	return iu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (iu *IPUpdate) SetNillableCreatedAt(t *time.Time) *IPUpdate {
+	if t != nil {
+		iu.SetCreatedAt(*t)
+	}
+	return iu
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (iu *IPUpdate) SetUpdatedAt(t time.Time) *IPUpdate {
 	iu.mutation.SetUpdatedAt(t)
@@ -163,6 +177,13 @@ func (iu *IPUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := iu.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: ip.FieldCreatedAt,
+		})
+	}
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -248,6 +269,20 @@ type IPUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *IPMutation
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (iuo *IPUpdateOne) SetCreatedAt(t time.Time) *IPUpdateOne {
+	iuo.mutation.SetCreatedAt(t)
+	return iuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (iuo *IPUpdateOne) SetNillableCreatedAt(t *time.Time) *IPUpdateOne {
+	if t != nil {
+		iuo.SetCreatedAt(*t)
+	}
+	return iuo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -407,6 +442,13 @@ func (iuo *IPUpdateOne) sqlSave(ctx context.Context) (_node *IP, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := iuo.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: ip.FieldCreatedAt,
+		})
 	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
