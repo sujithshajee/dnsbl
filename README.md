@@ -41,5 +41,5 @@ See list of configuration using `-h` on the binary.
 - `app/ent` -- entity framework with gqlgen integration
 - `app/ent/schema` -- entity schema definitions
 - `app/ent/mixin` -- entity mixins
-- `app/graphql` -- gqlgen-based GraphQL generation and server
+- `app/server` -- gqlgen-based GraphQL generation and server
 - `app/worker` -- background worker library
