@@ -1,31 +1,9 @@
-type Query {
-  node(id: ID!): Node
-  getIPDetails(ip: String!): IP
-}
-
-type Mutation {
-  enqueue(ip: [String!]): [Task]
-}
-
 interface Node {
   id: ID!
 }
 
-enum OrderDirection {
-  ASC
-  DESC
-}
-
-scalar Cursor
 scalar Time
 scalar UUID
-
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: Cursor
-  endCursor: Cursor
-}
 
 type IP implements Node {
   id: ID!
@@ -33,15 +11,7 @@ type IP implements Node {
   updated_at: Time!
   response_code: String!
   ip_address: String!
-  queries(after: Cursor, first: Int, before: Cursor, last: Int, orderBy: AppQueryOrder): AppQueryConnection
-}
-
-type AppQuery implements Node {
-  id: ID!
-  created_at: Time!
-  updated_at: Time!
-  ip: IP!
-  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
+  queries(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: AppQueryOrder): AppQueryConnection
 }
 
 type AppResponse implements Node {
@@ -49,26 +19,28 @@ type AppResponse implements Node {
   created_at: Time!
   updated_at: Time!
   query: AppQuery!
-  code: String!
+  response_code: String!
   description: String!
 }
 
-type Task implements Node {
-  id: ID!
-  type: TaskType!
-  ip_address: String!
-  status: TaskStatus!
-  error: String
+type AppResponseConnection {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [AppResponseEdge]
 }
 
-input AppQueryOrder {
-  direction: OrderDirection!
-  field: AppQueryOrderField
+type AppResponseEdge {
+  node: AppResponse
+  cursor: Cursor!
 }
 
-enum AppQueryOrderField {
-  UPDATED_AT
-  CREATED_AT
+scalar Cursor
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: Cursor
+  endCursor: Cursor
 }
 
 type AppQueryConnection {
@@ -82,15 +54,45 @@ type AppQueryEdge {
   cursor: Cursor!
 }
 
-type AppResponseConnection {
-  totalCount: Int!
-  pageInfo: PageInfo!
-  edges: [AppResponseEdge]
+enum OrderDirection {
+  ASC
+  DESC
 }
 
-type AppResponseEdge {
-  node: AppResponse
-  cursor: Cursor!
+enum AppQueryOrderField {
+  UPDATED_AT
+  CREATED_AT
+}
+
+input AppQueryOrder {
+  direction: OrderDirection!
+  field: AppQueryOrderField
+}
+
+type AppQuery implements Node {
+  id: ID!
+  created_at: Time!
+  updated_at: Time!
+  ip: IP!
+  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
+}
+
+type Query {
+  node(id: ID!): Node
+  nodes(ids: [ID!]!): [Node]!
+  getIPDetails(ip: String!): IP
+}
+
+type Mutation {
+  enqueue(ip: [String!]): [Task]
+}
+
+type Task implements Node {
+  id: ID!
+  type: TaskType!
+  ip_address: String!
+  status: TaskStatus!
+  error: String
 }
 
 enum TaskType {

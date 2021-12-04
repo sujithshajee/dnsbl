@@ -25,20 +25,6 @@ func (r *appQueryResolver) Responses(ctx context.Context, obj *ent.AppQuery) (*e
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *appResponseResolver) Code(ctx context.Context, obj *ent.AppResponse) (string, error) {
-	rsp, err := obj.QueryQuery().
-		Order(
-			ent.Desc(appquery.FieldCreatedAt),
-		).
-		QueryResponses().
-		First(ctx)
-	if err != nil {
-		return "", fmt.Errorf("unable to find response for IP: %w", err)
-	}
-
-	return rsp.Responsecode, nil
-}
-
 func (r *appResponseResolver) Description(ctx context.Context, obj *ent.AppResponse) (string, error) {
 	rsp, err := obj.QueryQuery().
 		Order(
@@ -54,7 +40,17 @@ func (r *appResponseResolver) Description(ctx context.Context, obj *ent.AppRespo
 }
 
 func (r *iPResolver) ResponseCode(ctx context.Context, obj *ent.IP) (string, error) {
-	panic(fmt.Errorf("not implemented"))
+	rsp, err := obj.QueryQueries().
+		Order(
+			ent.Desc(appquery.FieldCreatedAt),
+		).
+		QueryResponses().
+		First(ctx)
+	if err != nil {
+		return "", fmt.Errorf("unable to find response for IP: %w", err)
+	}
+
+	return rsp.Responsecode, nil
 }
 
 func (r *iPResolver) Queries(ctx context.Context, obj *ent.IP) (*ent.AppQueryConnection, error) {
@@ -89,8 +85,12 @@ func (r *queryResolver) Node(ctx context.Context, id uuid.UUID) (ent.Noder, erro
 	return r.client.Noder(ctx, id)
 }
 
+func (r *queryResolver) Nodes(ctx context.Context, ids []uuid.UUID) ([]ent.Noder, error) {
+	return r.client.Noders(ctx, ids)
+}
+
 func (r *queryResolver) GetIPDetails(ctx context.Context, ip string) (*ent.IP, error) {
-	return r.client.IP.Query().Where(ipadder.IPAddressEQ(ip)).Only(ctx)
+	return r.client.IP.Query().Where(ipadder.IPAddressEQ(ip)).First(ctx)
 }
 
 func (r *taskResolver) Type(ctx context.Context, obj *ent.Task) (model.TaskType, error) {

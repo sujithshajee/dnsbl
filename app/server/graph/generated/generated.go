@@ -71,12 +71,12 @@ type ComplexityRoot struct {
 	}
 
 	AppResponse struct {
-		Code        func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Query       func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		Description  func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Query        func(childComplexity int) int
+		Responsecode func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
 	}
 
 	AppResponseConnection struct {
@@ -113,6 +113,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetIPDetails func(childComplexity int, ip string) int
 		Node         func(childComplexity int, id uuid.UUID) int
+		Nodes        func(childComplexity int, ids []uuid.UUID) int
 	}
 
 	Task struct {
@@ -129,7 +130,6 @@ type AppQueryResolver interface {
 	Responses(ctx context.Context, obj *ent.AppQuery) (*ent.AppResponseConnection, error)
 }
 type AppResponseResolver interface {
-	Code(ctx context.Context, obj *ent.AppResponse) (string, error)
 	Description(ctx context.Context, obj *ent.AppResponse) (string, error)
 }
 type IPResolver interface {
@@ -142,6 +142,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id uuid.UUID) (ent.Noder, error)
+	Nodes(ctx context.Context, ids []uuid.UUID) ([]ent.Noder, error)
 	GetIPDetails(ctx context.Context, ip string) (*ent.IP, error)
 }
 type TaskResolver interface {
@@ -235,13 +236,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AppQueryEdge.Node(childComplexity), true
 
-	case "AppResponse.code":
-		if e.complexity.AppResponse.Code == nil {
-			break
-		}
-
-		return e.complexity.AppResponse.Code(childComplexity), true
-
 	case "AppResponse.created_at":
 		if e.complexity.AppResponse.CreatedAt == nil {
 			break
@@ -269,6 +263,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AppResponse.Query(childComplexity), true
+
+	case "AppResponse.response_code":
+		if e.complexity.AppResponse.Responsecode == nil {
+			break
+		}
+
+		return e.complexity.AppResponse.Responsecode(childComplexity), true
 
 	case "AppResponse.updated_at":
 		if e.complexity.AppResponse.UpdatedAt == nil {
@@ -418,6 +419,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Node(childComplexity, args["id"].(uuid.UUID)), true
 
+	case "Query.nodes":
+		if e.complexity.Query.Nodes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_nodes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]uuid.UUID)), true
+
 	case "Task.error":
 		if e.complexity.Task.Error == nil {
 			break
@@ -517,34 +530,12 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/schema/app.graphqls", Input: `type Query {
-  node(id: ID!): Node
-  getIPDetails(ip: String!): IP
-}
-
-type Mutation {
-  enqueue(ip: [String!]): [Task]
-}
-
-interface Node {
+	{Name: "graph/schema/app.graphqls", Input: `interface Node {
   id: ID!
 }
 
-enum OrderDirection {
-  ASC
-  DESC
-}
-
-scalar Cursor
 scalar Time
 scalar UUID
-
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: Cursor
-  endCursor: Cursor
-}
 
 type IP implements Node {
   id: ID!
@@ -552,15 +543,7 @@ type IP implements Node {
   updated_at: Time!
   response_code: String!
   ip_address: String!
-  queries(after: Cursor, first: Int, before: Cursor, last: Int, orderBy: AppQueryOrder): AppQueryConnection
-}
-
-type AppQuery implements Node {
-  id: ID!
-  created_at: Time!
-  updated_at: Time!
-  ip: IP!
-  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
+  queries(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: AppQueryOrder): AppQueryConnection
 }
 
 type AppResponse implements Node {
@@ -568,26 +551,28 @@ type AppResponse implements Node {
   created_at: Time!
   updated_at: Time!
   query: AppQuery!
-  code: String!
+  response_code: String!
   description: String!
 }
 
-type Task implements Node {
-  id: ID!
-  type: TaskType!
-  ip_address: String!
-  status: TaskStatus!
-  error: String
+type AppResponseConnection {
+  totalCount: Int!
+  pageInfo: PageInfo!
+  edges: [AppResponseEdge]
 }
 
-input AppQueryOrder {
-  direction: OrderDirection!
-  field: AppQueryOrderField
+type AppResponseEdge {
+  node: AppResponse
+  cursor: Cursor!
 }
 
-enum AppQueryOrderField {
-  UPDATED_AT
-  CREATED_AT
+scalar Cursor
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: Cursor
+  endCursor: Cursor
 }
 
 type AppQueryConnection {
@@ -601,15 +586,45 @@ type AppQueryEdge {
   cursor: Cursor!
 }
 
-type AppResponseConnection {
-  totalCount: Int!
-  pageInfo: PageInfo!
-  edges: [AppResponseEdge]
+enum OrderDirection {
+  ASC
+  DESC
 }
 
-type AppResponseEdge {
-  node: AppResponse
-  cursor: Cursor!
+enum AppQueryOrderField {
+  UPDATED_AT
+  CREATED_AT
+}
+
+input AppQueryOrder {
+  direction: OrderDirection!
+  field: AppQueryOrderField
+}
+
+type AppQuery implements Node {
+  id: ID!
+  created_at: Time!
+  updated_at: Time!
+  ip: IP!
+  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
+}
+
+type Query {
+  node(id: ID!): Node
+  nodes(ids: [ID!]!): [Node]!
+  getIPDetails(ip: String!): IP
+}
+
+type Mutation {
+  enqueue(ip: [String!]): [Task]
+}
+
+type Task implements Node {
+  id: ID!
+  type: TaskType!
+  ip_address: String!
+  status: TaskStatus!
+  error: String
 }
 
 enum TaskType {
@@ -1008,6 +1023,21 @@ func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs m
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []uuid.UUID
+	if tmp, ok := rawArgs["ids"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ids"))
+		arg0, err = ec.unmarshalNID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["ids"] = arg0
 	return args, nil
 }
 
@@ -1530,7 +1560,7 @@ func (ec *executionContext) _AppResponse_query(ctx context.Context, field graphq
 	return ec.marshalNAppQuery2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQuery(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AppResponse_code(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponse) (ret graphql.Marshaler) {
+func (ec *executionContext) _AppResponse_response_code(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1541,14 +1571,14 @@ func (ec *executionContext) _AppResponse_code(ctx context.Context, field graphql
 		Object:     "AppResponse",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.AppResponse().Code(rctx, obj)
+		return obj.Responsecode, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2186,6 +2216,48 @@ func (ec *executionContext) _Query_node(ctx context.Context, field graphql.Colle
 	res := resTmp.(ent.Noder)
 	fc.Result = res
 	return ec.marshalONode2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐNoder(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_nodes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_nodes_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Nodes(rctx, args["ids"].([]uuid.UUID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]ent.Noder)
+	fc.Result = res
+	return ec.marshalNNode2ᚕgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐNoder(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getIPDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5591,16 +5663,16 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._IP(ctx, sel, obj)
-	case *ent.AppQuery:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._AppQuery(ctx, sel, obj)
 	case *ent.AppResponse:
 		if obj == nil {
 			return graphql.Null
 		}
 		return ec._AppResponse(ctx, sel, obj)
+	case *ent.AppQuery:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._AppQuery(ctx, sel, obj)
 	case *ent.Task:
 		if obj == nil {
 			return graphql.Null
@@ -5780,20 +5852,11 @@ func (ec *executionContext) _AppResponse(ctx context.Context, sel ast.SelectionS
 				}
 				return res
 			})
-		case "code":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._AppResponse_code(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+		case "response_code":
+			out.Values[i] = ec._AppResponse_response_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "description":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -6037,6 +6100,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_node(ctx, field)
+				return res
+			})
+		case "nodes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_nodes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "getIPDetails":
@@ -6437,6 +6514,42 @@ func (ec *executionContext) marshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx c
 	return res
 }
 
+func (ec *executionContext) unmarshalNID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx context.Context, v interface{}) ([]uuid.UUID, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]uuid.UUID, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx context.Context, sel ast.SelectionSet, v []uuid.UUID) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNIP2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐIP(ctx context.Context, sel ast.SelectionSet, v ent.IP) graphql.Marshaler {
 	return ec._IP(ctx, sel, &v)
 }
@@ -6469,6 +6582,44 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNNode2ᚕgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v []ent.Noder) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalONode2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐNoder(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐOrderDirection(ctx context.Context, v interface{}) (ent.OrderDirection, error) {
