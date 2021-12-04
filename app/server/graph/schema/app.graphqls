@@ -1,3 +1,32 @@
+type Query {
+  node(id: ID!): Node
+  getIPDetails(ip: String!): IP
+}
+
+type Mutation {
+  enqueue(ip: [String!]): [Task]
+}
+
+interface Node {
+  id: ID!
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+scalar Cursor
+scalar Time
+scalar UUID
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: Cursor
+  endCursor: Cursor
+}
+
 type IP implements Node {
   id: ID!
   created_at: Time!
@@ -5,6 +34,31 @@ type IP implements Node {
   response_code: String!
   ip_address: String!
   queries(after: Cursor, first: Int, before: Cursor, last: Int, orderBy: AppQueryOrder): AppQueryConnection
+}
+
+type AppQuery implements Node {
+  id: ID!
+  created_at: Time!
+  updated_at: Time!
+  ip: IP!
+  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
+}
+
+type AppResponse implements Node {
+  id: ID!
+  created_at: Time!
+  updated_at: Time!
+  query: AppQuery!
+  code: String!
+  description: String!
+}
+
+type Task implements Node {
+  id: ID!
+  type: TaskType!
+  ip_address: String!
+  status: TaskStatus!
+  error: String
 }
 
 input AppQueryOrder {
@@ -28,14 +82,6 @@ type AppQueryEdge {
   cursor: Cursor!
 }
 
-type AppQuery implements Node {
-  id: ID!
-  created_at: Time!
-  updated_at: Time!
-  ip: IP!
-  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
-}
-
 type AppResponseConnection {
   totalCount: Int!
   pageInfo: PageInfo!
@@ -47,11 +93,13 @@ type AppResponseEdge {
   cursor: Cursor!
 }
 
-type AppResponse implements Node {
-  id: ID!
-  created_at: Time!
-  updated_at: Time!
-  query: AppQuery!
-  code: String!
-  description: String!
+enum TaskType {
+  IPDNSBL
+}
+
+enum TaskStatus {
+  WAITING
+  IN_PROGRESS
+  DONE
+  ERROR
 }
