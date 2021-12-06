@@ -1,0 +1,9 @@
+version: '3.2'
+services:
+  server:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 8091:8080
+    image: dnsbl
+    container_name: dnsbl-container

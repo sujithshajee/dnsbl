@@ -11,7 +11,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
-	flags "github.com/sujithshajee/dnsbl/app"
 	"github.com/sujithshajee/dnsbl/app/auth"
 	"github.com/sujithshajee/dnsbl/app/ent"
 	"github.com/sujithshajee/dnsbl/app/ent/migrate"
@@ -21,8 +20,6 @@ import (
 
 // GraphQLFlags are the flags for the GraphQL HTTP service
 type GraphQLFlags struct {
-	flags.Database
-
 	Port   string `short:"p" long:"port" env:"PORT" description:"Port to run the server on, listens on 0.0.0.0:PORT"`
 	Listen string `short:"l" long:"listen" env:"LISTEN" description:"Listen address to run the server on" default:":8080"`
 	Debug  bool   `long:"debug" env:"DEBUG" description:"If the server should be in debug mode"`
@@ -65,6 +62,8 @@ type Server struct {
 func (s *Server) Start() error {
 	if Flags.Port != "" {
 		Flags.Listen = fmt.Sprintf(":%s", Flags.Port)
+	} else {
+		Flags.Listen = fmt.Sprintf(":%s", "8080")
 	}
 
 	s.logger.Infof("listening on %s", Flags.Listen)
@@ -106,7 +105,7 @@ func New(opts ...Option) (*Server, error) {
 			entOpts = append(entOpts, ent.Debug())
 		}
 
-		cl, err := ent.Open(Flags.DatabaseDriver, Flags.DatabaseURI, entOpts...)
+		cl, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1", entOpts...)
 		if err != nil {
 			return nil, fmt.Errorf("unable to open database connetion: %w", err)
 		}
@@ -119,6 +118,12 @@ func New(opts ...Option) (*Server, error) {
 	if err != nil {
 		return nil, fmt.Errorf("migration: %w", err)
 	}
+
+	cl, er := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	if er != nil {
+		return nil, fmt.Errorf("unable to open database connetion: %w", err)
+	}
+	auth.GenerateUser(ctx, cl, "secureworks", "supersecret")
 
 	r := mux.NewRouter()
 
