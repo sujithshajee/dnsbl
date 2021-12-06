@@ -55,19 +55,7 @@ type ComplexityRoot struct {
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
 		IP        func(childComplexity int) int
-		Responses func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
-	}
-
-	AppQueryConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	AppQueryEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
 	}
 
 	AppResponse struct {
@@ -79,35 +67,16 @@ type ComplexityRoot struct {
 		UpdatedAt    func(childComplexity int) int
 	}
 
-	AppResponseConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	AppResponseEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
-	}
-
 	IP struct {
 		CreatedAt    func(childComplexity int) int
 		ID           func(childComplexity int) int
 		IPAddress    func(childComplexity int) int
-		Queries      func(childComplexity int) int
 		ResponseCode func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
 	}
 
 	Mutation struct {
 		Enqueue func(childComplexity int, ip []string) int
-	}
-
-	PageInfo struct {
-		EndCursor       func(childComplexity int) int
-		HasNextPage     func(childComplexity int) int
-		HasPreviousPage func(childComplexity int) int
-		StartCursor     func(childComplexity int) int
 	}
 
 	Query struct {
@@ -127,15 +96,12 @@ type ComplexityRoot struct {
 
 type AppQueryResolver interface {
 	IP(ctx context.Context, obj *ent.AppQuery) (*ent.IP, error)
-	Responses(ctx context.Context, obj *ent.AppQuery) (*ent.AppResponseConnection, error)
 }
 type AppResponseResolver interface {
 	Description(ctx context.Context, obj *ent.AppResponse) (string, error)
 }
 type IPResolver interface {
 	ResponseCode(ctx context.Context, obj *ent.IP) (string, error)
-
-	Queries(ctx context.Context, obj *ent.IP) (*ent.AppQueryConnection, error)
 }
 type MutationResolver interface {
 	Enqueue(ctx context.Context, ip []string) ([]*ent.Task, error)
@@ -187,54 +153,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AppQuery.IP(childComplexity), true
 
-	case "AppQuery.responses":
-		if e.complexity.AppQuery.Responses == nil {
-			break
-		}
-
-		return e.complexity.AppQuery.Responses(childComplexity), true
-
 	case "AppQuery.updated_at":
 		if e.complexity.AppQuery.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.AppQuery.UpdatedAt(childComplexity), true
-
-	case "AppQueryConnection.edges":
-		if e.complexity.AppQueryConnection.Edges == nil {
-			break
-		}
-
-		return e.complexity.AppQueryConnection.Edges(childComplexity), true
-
-	case "AppQueryConnection.pageInfo":
-		if e.complexity.AppQueryConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.AppQueryConnection.PageInfo(childComplexity), true
-
-	case "AppQueryConnection.totalCount":
-		if e.complexity.AppQueryConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.AppQueryConnection.TotalCount(childComplexity), true
-
-	case "AppQueryEdge.cursor":
-		if e.complexity.AppQueryEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.AppQueryEdge.Cursor(childComplexity), true
-
-	case "AppQueryEdge.node":
-		if e.complexity.AppQueryEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.AppQueryEdge.Node(childComplexity), true
 
 	case "AppResponse.created_at":
 		if e.complexity.AppResponse.CreatedAt == nil {
@@ -278,41 +202,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AppResponse.UpdatedAt(childComplexity), true
 
-	case "AppResponseConnection.edges":
-		if e.complexity.AppResponseConnection.Edges == nil {
-			break
-		}
-
-		return e.complexity.AppResponseConnection.Edges(childComplexity), true
-
-	case "AppResponseConnection.pageInfo":
-		if e.complexity.AppResponseConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.AppResponseConnection.PageInfo(childComplexity), true
-
-	case "AppResponseConnection.totalCount":
-		if e.complexity.AppResponseConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.AppResponseConnection.TotalCount(childComplexity), true
-
-	case "AppResponseEdge.cursor":
-		if e.complexity.AppResponseEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.AppResponseEdge.Cursor(childComplexity), true
-
-	case "AppResponseEdge.node":
-		if e.complexity.AppResponseEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.AppResponseEdge.Node(childComplexity), true
-
 	case "IP.created_at":
 		if e.complexity.IP.CreatedAt == nil {
 			break
@@ -333,13 +222,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IP.IPAddress(childComplexity), true
-
-	case "IP.queries":
-		if e.complexity.IP.Queries == nil {
-			break
-		}
-
-		return e.complexity.IP.Queries(childComplexity), true
 
 	case "IP.response_code":
 		if e.complexity.IP.ResponseCode == nil {
@@ -366,34 +248,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Enqueue(childComplexity, args["ip"].([]string)), true
-
-	case "PageInfo.endCursor":
-		if e.complexity.PageInfo.EndCursor == nil {
-			break
-		}
-
-		return e.complexity.PageInfo.EndCursor(childComplexity), true
-
-	case "PageInfo.hasNextPage":
-		if e.complexity.PageInfo.HasNextPage == nil {
-			break
-		}
-
-		return e.complexity.PageInfo.HasNextPage(childComplexity), true
-
-	case "PageInfo.hasPreviousPage":
-		if e.complexity.PageInfo.HasPreviousPage == nil {
-			break
-		}
-
-		return e.complexity.PageInfo.HasPreviousPage(childComplexity), true
-
-	case "PageInfo.startCursor":
-		if e.complexity.PageInfo.StartCursor == nil {
-			break
-		}
-
-		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
 	case "Query.getIPDetails":
 		if e.complexity.Query.GetIPDetails == nil {
@@ -543,7 +397,6 @@ type IP implements Node {
   updated_at: Time!
   response_code: String!
   ip_address: String!
-  queries(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: AppQueryOrder): AppQueryConnection
 }
 
 type AppResponse implements Node {
@@ -555,58 +408,13 @@ type AppResponse implements Node {
   description: String!
 }
 
-type AppResponseConnection {
-  totalCount: Int!
-  pageInfo: PageInfo!
-  edges: [AppResponseEdge]
-}
-
-type AppResponseEdge {
-  node: AppResponse
-  cursor: Cursor!
-}
-
 scalar Cursor
-
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: Cursor
-  endCursor: Cursor
-}
-
-type AppQueryConnection {
-  totalCount: Int!
-  pageInfo: PageInfo!
-  edges: [AppQueryEdge]
-}
-
-type AppQueryEdge {
-  node: AppQuery
-  cursor: Cursor!
-}
-
-enum OrderDirection {
-  ASC
-  DESC
-}
-
-enum AppQueryOrderField {
-  UPDATED_AT
-  CREATED_AT
-}
-
-input AppQueryOrder {
-  direction: OrderDirection!
-  field: AppQueryOrderField
-}
 
 type AppQuery implements Node {
   id: ID!
   created_at: Time!
   updated_at: Time!
   ip: IP!
-  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
 }
 
 type Query {
@@ -1219,207 +1027,6 @@ func (ec *executionContext) _AppQuery_ip(ctx context.Context, field graphql.Coll
 	return ec.marshalNIP2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐIP(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AppQuery_responses(ctx context.Context, field graphql.CollectedField, obj *ent.AppQuery) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppQuery",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.AppQuery().Responses(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.AppResponseConnection)
-	fc.Result = res
-	return ec.marshalOAppResponseConnection2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponseConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppQueryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.AppQueryConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppQueryConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppQueryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.AppQueryConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppQueryConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppQueryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.AppQueryConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppQueryConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.AppQueryEdge)
-	fc.Result = res
-	return ec.marshalOAppQueryEdge2ᚕᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryEdge(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppQueryEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.AppQueryEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppQueryEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.AppQuery)
-	fc.Result = res
-	return ec.marshalOAppQuery2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQuery(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppQueryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.AppQueryEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppQueryEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.Cursor)
-	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _AppResponse_id(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1630,175 +1237,6 @@ func (ec *executionContext) _AppResponse_description(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AppResponseConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponseConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppResponseConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppResponseConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponseConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppResponseConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppResponseConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponseConnection) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppResponseConnection",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.AppResponseEdge)
-	fc.Result = res
-	return ec.marshalOAppResponseEdge2ᚕᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponseEdge(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppResponseEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponseEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppResponseEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.AppResponse)
-	fc.Result = res
-	return ec.marshalOAppResponse2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponse(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AppResponseEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.AppResponseEdge) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AppResponseEdge",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(ent.Cursor)
-	fc.Result = res
-	return ec.marshalNCursor2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _IP_id(ctx context.Context, field graphql.CollectedField, obj *ent.IP) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1974,38 +1412,6 @@ func (ec *executionContext) _IP_ip_address(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _IP_queries(ctx context.Context, field graphql.CollectedField, obj *ent.IP) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "IP",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.IP().Queries(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.AppQueryConnection)
-	fc.Result = res
-	return ec.marshalOAppQueryConnection2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryConnection(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_enqueue(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2043,140 +1449,6 @@ func (ec *executionContext) _Mutation_enqueue(ctx context.Context, field graphql
 	res := resTmp.([]*ent.Task)
 	fc.Result = res
 	return ec.marshalOTask2ᚕᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐTask(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *ent.PageInfo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PageInfo",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HasNextPage, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PageInfo_hasPreviousPage(ctx context.Context, field graphql.CollectedField, obj *ent.PageInfo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PageInfo",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HasPreviousPage, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *ent.PageInfo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PageInfo",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StartCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Cursor)
-	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graphql.CollectedField, obj *ent.PageInfo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "PageInfo",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EndCursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Cursor)
-	fc.Result = res
-	return ec.marshalOCursor2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_node(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3663,37 +2935,6 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
-
-func (ec *executionContext) unmarshalInputAppQueryOrder(ctx context.Context, obj interface{}) (ent.AppQueryOrder, error) {
-	var it ent.AppQueryOrder
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "direction":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
-			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐOrderDirection(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "field":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
-			it.Field, err = ec.unmarshalOAppQueryOrderField2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryOrderField(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
 
 func (ec *executionContext) unmarshalInputAppQueryWhereInput(ctx context.Context, obj interface{}) (ent.AppQueryWhereInput, error) {
 	var it ent.AppQueryWhereInput
@@ -5727,80 +4968,6 @@ func (ec *executionContext) _AppQuery(ctx context.Context, sel ast.SelectionSet,
 				}
 				return res
 			})
-		case "responses":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._AppQuery_responses(ctx, field, obj)
-				return res
-			})
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var appQueryConnectionImplementors = []string{"AppQueryConnection"}
-
-func (ec *executionContext) _AppQueryConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.AppQueryConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, appQueryConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AppQueryConnection")
-		case "totalCount":
-			out.Values[i] = ec._AppQueryConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "pageInfo":
-			out.Values[i] = ec._AppQueryConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "edges":
-			out.Values[i] = ec._AppQueryConnection_edges(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var appQueryEdgeImplementors = []string{"AppQueryEdge"}
-
-func (ec *executionContext) _AppQueryEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.AppQueryEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, appQueryEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AppQueryEdge")
-		case "node":
-			out.Values[i] = ec._AppQueryEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._AppQueryEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5882,69 +5049,6 @@ func (ec *executionContext) _AppResponse(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
-var appResponseConnectionImplementors = []string{"AppResponseConnection"}
-
-func (ec *executionContext) _AppResponseConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.AppResponseConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, appResponseConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AppResponseConnection")
-		case "totalCount":
-			out.Values[i] = ec._AppResponseConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "pageInfo":
-			out.Values[i] = ec._AppResponseConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "edges":
-			out.Values[i] = ec._AppResponseConnection_edges(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var appResponseEdgeImplementors = []string{"AppResponseEdge"}
-
-func (ec *executionContext) _AppResponseEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.AppResponseEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, appResponseEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AppResponseEdge")
-		case "node":
-			out.Values[i] = ec._AppResponseEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._AppResponseEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var iPImplementors = []string{"IP", "Node"}
 
 func (ec *executionContext) _IP(ctx context.Context, sel ast.SelectionSet, obj *ent.IP) graphql.Marshaler {
@@ -5990,17 +5094,6 @@ func (ec *executionContext) _IP(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "queries":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._IP_queries(ctx, field, obj)
-				return res
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6029,42 +5122,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "enqueue":
 			out.Values[i] = ec._Mutation_enqueue(ctx, field)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var pageInfoImplementors = []string{"PageInfo"}
-
-func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet, obj *ent.PageInfo) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, pageInfoImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("PageInfo")
-		case "hasNextPage":
-			out.Values[i] = ec._PageInfo_hasNextPage(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "hasPreviousPage":
-			out.Values[i] = ec._PageInfo_hasPreviousPage(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "startCursor":
-			out.Values[i] = ec._PageInfo_startCursor(ctx, field, obj)
-		case "endCursor":
-			out.Values[i] = ec._PageInfo_endCursor(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6489,16 +5546,6 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx context.Context, v interface{}) (ent.Cursor, error) {
-	var res ent.Cursor
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNCursor2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v ent.Cursor) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, v interface{}) (uuid.UUID, error) {
 	res, err := model.UnmarshalUUID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6569,21 +5616,6 @@ func (ec *executionContext) unmarshalNIPWhereInput2ᚖgithubᚗcomᚋsujithshaje
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
-	res, err := graphql.UnmarshalInt(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
-	res := graphql.MarshalInt(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
 func (ec *executionContext) marshalNNode2ᚕgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v []ent.Noder) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -6620,20 +5652,6 @@ func (ec *executionContext) marshalNNode2ᚕgithubᚗcomᚋsujithshajeeᚋdnsbl�
 	wg.Wait()
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐOrderDirection(ctx context.Context, v interface{}) (ent.OrderDirection, error) {
-	var res ent.OrderDirection
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v ent.OrderDirection) graphql.Marshaler {
-	return v
-}
-
-func (ec *executionContext) marshalNPageInfo2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v ent.PageInfo) graphql.Marshaler {
-	return ec._PageInfo(ctx, sel, &v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -6953,92 +5971,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAppQuery2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQuery(ctx context.Context, sel ast.SelectionSet, v *ent.AppQuery) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AppQuery(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOAppQueryConnection2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryConnection(ctx context.Context, sel ast.SelectionSet, v *ent.AppQueryConnection) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AppQueryConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOAppQueryEdge2ᚕᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.AppQueryEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOAppQueryEdge2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOAppQueryEdge2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryEdge(ctx context.Context, sel ast.SelectionSet, v *ent.AppQueryEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AppQueryEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOAppQueryOrder2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryOrder(ctx context.Context, v interface{}) (*ent.AppQueryOrder, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputAppQueryOrder(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOAppQueryOrderField2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryOrderField(ctx context.Context, v interface{}) (*ent.AppQueryOrderField, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(ent.AppQueryOrderField)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOAppQueryOrderField2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.AppQueryOrderField) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
-}
-
 func (ec *executionContext) unmarshalOAppQueryWhereInput2ᚕᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppQueryWhereInputᚄ(ctx context.Context, v interface{}) ([]*ent.AppQueryWhereInput, error) {
 	if v == nil {
 		return nil, nil
@@ -7069,68 +6001,6 @@ func (ec *executionContext) unmarshalOAppQueryWhereInput2ᚖgithubᚗcomᚋsujit
 	}
 	res, err := ec.unmarshalInputAppQueryWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOAppResponse2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponse(ctx context.Context, sel ast.SelectionSet, v *ent.AppResponse) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AppResponse(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOAppResponseConnection2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponseConnection(ctx context.Context, sel ast.SelectionSet, v *ent.AppResponseConnection) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AppResponseConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOAppResponseEdge2ᚕᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponseEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.AppResponseEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOAppResponseEdge2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponseEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOAppResponseEdge2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponseEdge(ctx context.Context, sel ast.SelectionSet, v *ent.AppResponseEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AppResponseEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOAppResponseWhereInput2ᚕᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐAppResponseWhereInputᚄ(ctx context.Context, v interface{}) ([]*ent.AppResponseWhereInput, error) {
@@ -7187,22 +6057,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
-}
-
-func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx context.Context, v interface{}) (*ent.Cursor, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(ent.Cursor)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐCursor(ctx context.Context, sel ast.SelectionSet, v *ent.Cursor) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOID2ᚕgithubᚗcomᚋgoogleᚋuuidᚐUUIDᚄ(ctx context.Context, v interface{}) ([]uuid.UUID, error) {
@@ -7299,21 +6153,6 @@ func (ec *executionContext) unmarshalOIPWhereInput2ᚖgithubᚗcomᚋsujithshaje
 	}
 	res, err := ec.unmarshalInputIPWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalInt(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalInt(*v)
 }
 
 func (ec *executionContext) marshalONode2githubᚗcomᚋsujithshajeeᚋdnsblᚋappᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v ent.Noder) graphql.Marshaler {

@@ -16,6 +16,14 @@ mage -v go:build
 Configuration can be provided either by environment variables, or CLI flags.
 See list of configuration using `-h` on the binary.
 
+### Running dnsbl with docker compose
+
+```docker
+docker-compose up -d
+```
+
+Server is accessiable on http://localhost:8091/graphql
+
 ### External Libraries Used
 
 - `entgo.io/ent v0.9.2-0.20210821141344-368a8f7a2e9a` -- ent is an entity relationship library

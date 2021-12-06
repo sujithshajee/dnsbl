@@ -11,7 +11,6 @@ type IP implements Node {
   updated_at: Time!
   response_code: String!
   ip_address: String!
-  queries(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: AppQueryOrder): AppQueryConnection
 }
 
 type AppResponse implements Node {
@@ -23,58 +22,13 @@ type AppResponse implements Node {
   description: String!
 }
 
-type AppResponseConnection {
-  totalCount: Int!
-  pageInfo: PageInfo!
-  edges: [AppResponseEdge]
-}
-
-type AppResponseEdge {
-  node: AppResponse
-  cursor: Cursor!
-}
-
 scalar Cursor
-
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: Cursor
-  endCursor: Cursor
-}
-
-type AppQueryConnection {
-  totalCount: Int!
-  pageInfo: PageInfo!
-  edges: [AppQueryEdge]
-}
-
-type AppQueryEdge {
-  node: AppQuery
-  cursor: Cursor!
-}
-
-enum OrderDirection {
-  ASC
-  DESC
-}
-
-enum AppQueryOrderField {
-  UPDATED_AT
-  CREATED_AT
-}
-
-input AppQueryOrder {
-  direction: OrderDirection!
-  field: AppQueryOrderField
-}
 
 type AppQuery implements Node {
   id: ID!
   created_at: Time!
   updated_at: Time!
   ip: IP!
-  responses(after: Cursor, first: Int, before: Cursor, last: Int): AppResponseConnection
 }
 
 type Query {

@@ -5,7 +5,6 @@ import (
 	"log"
 
 	gflags "github.com/jessevdk/go-flags"
-	flags "github.com/sujithshajee/dnsbl/app"
 	"github.com/sujithshajee/dnsbl/app/dnsbl"
 	"github.com/sujithshajee/dnsbl/app/ent"
 	"github.com/sujithshajee/dnsbl/app/ent/task"
@@ -14,9 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type cmd struct {
-	flags.Database
-}
+type cmd struct{}
 
 func Register(p *gflags.Parser) {
 	_, err := p.AddCommand("worker", "worker service", "", &cmd{})
@@ -26,7 +23,7 @@ func Register(p *gflags.Parser) {
 }
 
 func (c *cmd) Execute(args []string) error {
-	cl, err := ent.Open(c.DatabaseDriver, c.DatabaseURI)
+	cl, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
 	if err != nil {
 		return fmt.Errorf("opening database: %w", err)
 	}

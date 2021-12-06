@@ -6,16 +6,13 @@ import (
 	"log"
 
 	gflags "github.com/jessevdk/go-flags"
-	flags "github.com/sujithshajee/dnsbl/app"
 	"github.com/sujithshajee/dnsbl/app/auth"
 	"github.com/sujithshajee/dnsbl/app/ent"
 	"github.com/sujithshajee/dnsbl/app/ent/migrate"
 )
 
 type cmd struct{}
-type generateUserCmd struct {
-	flags.Database
-}
+type generateUserCmd struct{}
 
 func Register(p *gflags.Parser) {
 	c, err := p.AddCommand("run", "trigger command", "", &cmd{})
@@ -39,7 +36,7 @@ func (c *generateUserCmd) Run(args []string) error {
 	}
 	ctx := context.Background()
 
-	cl, err := ent.Open(c.DatabaseDriver, c.DatabaseURI)
+	cl, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
 	if err != nil {
 		return fmt.Errorf("opening database: %w", err)
 	}
