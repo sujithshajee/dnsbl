@@ -21,10 +21,6 @@ func (r *appQueryResolver) IP(ctx context.Context, obj *ent.AppQuery) (*ent.IP, 
 	return obj.Edges.IpaddressOrErr()
 }
 
-func (r *appQueryResolver) Responses(ctx context.Context, obj *ent.AppQuery) (*ent.AppResponseConnection, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 func (r *appResponseResolver) Description(ctx context.Context, obj *ent.AppResponse) (string, error) {
 	rsp, err := obj.QueryQuery().
 		Order(
@@ -51,10 +47,6 @@ func (r *iPResolver) ResponseCode(ctx context.Context, obj *ent.IP) (string, err
 	}
 
 	return rsp.Responsecode, nil
-}
-
-func (r *iPResolver) Queries(ctx context.Context, obj *ent.IP) (*ent.AppQueryConnection, error) {
-	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *mutationResolver) Enqueue(ctx context.Context, ip []string) ([]*ent.Task, error) {
@@ -94,11 +86,11 @@ func (r *queryResolver) GetIPDetails(ctx context.Context, ip string) (*ent.IP, e
 }
 
 func (r *taskResolver) Type(ctx context.Context, obj *ent.Task) (model.TaskType, error) {
-	panic(fmt.Errorf("not implemented"))
+	return model.TaskType(obj.Type), nil
 }
 
 func (r *taskResolver) Status(ctx context.Context, obj *ent.Task) (model.TaskStatus, error) {
-	panic(fmt.Errorf("not implemented"))
+	return model.TaskStatus(obj.Status), nil
 }
 
 // AppQuery returns generated.AppQueryResolver implementation.
